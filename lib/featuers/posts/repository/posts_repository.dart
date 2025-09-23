@@ -30,30 +30,75 @@ class PostsRepositoryImpl implements PostsRepository {
       }
     } on OfflineException {
       return Left(OfflineFailure());
+    } on ServerException {
+      return Left(ServerFailure());
     }
   }
 
   @override
   Future<Either<Failure, Unit>> deletePosts({required int id}) async {
-    // TODO: implement deletePosts
-    throw UnimplementedError();
+    try {
+      if (await networkInfo.isConnected) {
+        await remoteDataSource.deletePosts(id: id);
+        return Right(unit);
+      } else {
+        throw OfflineException();
+      }
+    } on OfflineException {
+      return Left(OfflineFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    }
   }
 
   @override
   Future<Either<Failure, List<PostsModel>>> getPosts() async {
-    // TODO: implement getPosts
-    throw UnimplementedError();
+    try {
+      if (await networkInfo.isConnected) {
+        final response = await remoteDataSource.getPosts();
+        return Right(response);
+      } else {
+        final response = await localDataSource.getPosts();
+        return Right(response);
+      }
+    } on ServerException {
+      return Left(ServerFailure());
+    } on EmptyCashException {
+      return Left(EmptyCashFailure());
+    }
   }
 
   @override
   Future<Either<Failure, PostsModel>> showPost({required int id}) async {
-    // TODO: implement showPost
-    throw UnimplementedError();
+    try {
+      if (await networkInfo.isConnected) {
+        final response = await remoteDataSource.showPost(id: id);
+        return Right(response);
+      } else {
+        throw OfflineException();
+      }
+    } on OfflineException {
+      return Left(OfflineFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    } on EmptyCashException {
+      return Left(EmptyCashFailure());
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> updatePosts({required PostsModel post}) async {
-    // TODO: implement updatePosts
-    throw UnimplementedError();
+    try {
+      if (await networkInfo.isConnected) {
+        await remoteDataSource.updatePosts(post: post);
+        return Right(unit);
+      } else {
+        throw OfflineException();
+      }
+    } on OfflineException {
+      return Left(OfflineFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    }
   }
 }
