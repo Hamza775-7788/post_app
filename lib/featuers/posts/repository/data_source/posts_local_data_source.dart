@@ -29,6 +29,7 @@ class PostsLocalDataSourceImpl implements PostsLocalDataSource {
   @override
   Future<Unit> setPosts({required List<PostsModel> posts}) async {
     final data = posts.map((e) => e.toJosn()).toList();
+
     try {
       await sharedPreferences!.setString(CASHED_POSTS, jsonEncode(data));
       return unit;

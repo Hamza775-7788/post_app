@@ -13,16 +13,14 @@ class PostsModel {
 
   factory PostsModel.fromJosn(json) {
     return PostsModel(
-      id: json['id'],
-      userId: json['userId'],
+      id: int.parse(json['id'].toString()),
+      userId: int.parse(json['userId'].toString()),
       title: json['title'],
       body: json['body'],
     );
   }
 
   toJosn() {
-    return {
-      {"userId": userId, "id": id, "title": title, "body": body},
-    };
+    return {"userId": userId, "id": id, "title": title, "body": body};
   }
 }

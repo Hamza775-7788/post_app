@@ -43,7 +43,7 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
   Future<List<PostsModel>> getPosts() async {
     final request = await getConnect.get(url);
     if (request.statusCode == 200) {
-      final jsonData = jsonDecode(request.body);
+      final jsonData = request.body;
       final listData = jsonData as List;
 
       return listData.map<PostsModel>((e) => PostsModel.fromJosn(e)).toList();
@@ -54,9 +54,9 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
   @override
   Future<PostsModel> showPost({required int id}) async {
-    final request = await getConnect.get(url);
+    final request = await getConnect.get("$url/$id");
     if (request.statusCode == 200) {
-      final jsonData = jsonDecode(request.body);
+      final jsonData = request.body;
 
       return PostsModel.fromJosn(jsonData);
     } else {

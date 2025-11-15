@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 
 import 'package:post_app/core/entity/post_entity.dart';
+import 'package:post_app/core/error/failure.dart';
 import 'package:post_app/core/error/handle_message.dart';
+import 'package:post_app/core/sherad/dialogs.dart';
 import 'package:post_app/featuers/posts/repository/posts_repository.dart';
 
 abstract class PostsController extends GetxController {
@@ -16,12 +18,16 @@ abstract class PostsController extends GetxController {
 class PostsControllerImpl extends PostsController {
   final PostsRepository _repository = PostsRepositoryImpl();
 
+  String? detailsErorr;
+  String? postsErorr;
   List<PostsModel> posts = [];
   PostsModel? postDetils;
 
   @override
   Future<void> addPost({required PostsModel post}) async {
+    showLoding();
     final request = await _repository.addPosts(post: post);
+    Get.back();
     request.fold(
       (failure) {
         handeErorr(failure);
@@ -64,7 +70,12 @@ class PostsControllerImpl extends PostsController {
     final request = await _repository.showPost(id: id);
     request.fold(
       (failure) {
-        handeErorr(failure);
+        if (failure.runtimeType == OfflineFailure) {
+          detailsErorr = "يبدو أنك غير متصل بالإنترنت.";
+          update();
+        } else {
+          handeErorr(failure);
+        }
       },
       (data) {
         postDetils = data;
@@ -75,7 +86,10 @@ class PostsControllerImpl extends PostsController {
 
   @override
   Future<void> updatePost({required PostsModel post}) async {
+    showLoding();
     final request = await _repository.updatePosts(post: post);
+    Get.back();
+
     request.fold(
       (failure) {
         handeErorr(failure);

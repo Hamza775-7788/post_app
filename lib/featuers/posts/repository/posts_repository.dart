@@ -56,6 +56,7 @@ class PostsRepositoryImpl implements PostsRepository {
     try {
       if (await networkInfo.isConnected) {
         final response = await remoteDataSource.getPosts();
+        await localDataSource.setPosts(posts: response);
         return Right(response);
       } else {
         final response = await localDataSource.getPosts();
